@@ -3,11 +3,15 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import AppHeader from '../../components/AppHeader';
 import Screen from '../../components/Screen';
 import { coupons } from '../../data/catalog';
-import { useCart } from '../../features/cart/CartContext';
+import { useAppStore } from '../../store/appStore';
 
 export default function CartPage() {
   const router = useRouter();
-  const { items, updateQuantity, appliedCouponCode, setAppliedCouponCode, summary } = useCart();
+  const items = useAppStore((state) => state.items);
+  const updateQuantity = useAppStore((state) => state.updateQuantity);
+  const appliedCouponCode = useAppStore((state) => state.appliedCouponCode);
+  const setAppliedCouponCode = useAppStore((state) => state.setAppliedCouponCode);
+  const summary = useAppStore((state) => state.summary);
   const isEmpty = items.length === 0;
 
   return (

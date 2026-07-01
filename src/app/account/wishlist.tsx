@@ -2,12 +2,14 @@ import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native
 import AppHeader from '../../components/AppHeader';
 import Screen from '../../components/Screen';
 import type { Product } from '../../domain/types';
-import { useCart } from '../../features/cart/CartContext';
+import { useAppStore } from '../../store/appStore';
 import { useTheme } from '../../theme/ThemeProvider';
 
 export default function WishlistPage() {
   const { theme } = useTheme();
-  const { wishlistItems, addItem, removeFromWishlist } = useCart();
+  const wishlistItems = useAppStore((state) => state.wishlistItems);
+  const addItem = useAppStore((state) => state.addItem);
+  const removeFromWishlist = useAppStore((state) => state.removeFromWishlist);
 
   const summaryText = `${wishlistItems.length} saved items`;
 
@@ -49,10 +51,10 @@ export default function WishlistPage() {
                 <View style={styles.cardHeader}>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.title}>{item.title}</Text>
-                    <Text style={styles.subtitle}>{item.subtitle}</Text>
+                    <Text style={styles.subtitle}>Farm fresh and ready to order</Text>
                   </View>
-                  <View style={[styles.badge, { backgroundColor: '#e8f7ed' }]}>
-                    <Text style={styles.badgeText}>{item.badge}</Text>
+                  <View style={[styles.badge, { backgroundColor: '#e8f7ed' }]}> 
+                    <Text style={styles.badgeText}>Saved</Text>
                   </View>
                 </View>
 
@@ -61,13 +63,13 @@ export default function WishlistPage() {
                     <Text style={styles.price}>₹{item.price}</Text>
                     <Text style={styles.unit}>{item.unit}</Text>
                   </View>
-                  <View style={[styles.stockPill, item.stock === 'Low stock' ? styles.stockLow : styles.stockGood]}>
-                    <Text style={[styles.stockText, item.stock === 'Low stock' ? styles.stockLowText : styles.stockGoodText]}>{item.stock}</Text>
+                  <View style={[styles.stockPill, styles.stockGood]}>
+                    <Text style={[styles.stockText, styles.stockGoodText]}>In stock</Text>
                   </View>
                 </View>
 
                 <View style={styles.actions}>
-                  <Pressable onPress={() => moveToCart(item)} style={[styles.primaryButton, { backgroundColor: theme.colors.primary }]}>
+                  <Pressable onPress={() => moveToCart(item)} style={[styles.primaryButton, { backgroundColor: theme.colors.primary }]}> 
                     <Text style={styles.primaryButtonText}>Move to cart</Text>
                   </Pressable>
                   <Pressable onPress={() => removeFromWishlist(item.id)} style={styles.secondaryButton}>

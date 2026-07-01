@@ -2,14 +2,17 @@ import { useEffect } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import type { Product } from "../domain/types";
-import { useCart } from "../features/cart/CartContext";
+import { useAppStore } from "../store/appStore";
 import { useTheme } from "../theme/ThemeProvider";
 
 export default function ProductCard({ product }: { product: Product }) {
   const { theme } = useTheme();
-  const { addItem, getQuantity, updateQuantity, toggleWishlist, isInWishlist } = useCart();
-  const qty = getQuantity(product.id);
-  const isSaved = isInWishlist(product.id);
+  const addItem = useAppStore((state) => state.addItem);
+  const updateQuantity = useAppStore((state) => state.updateQuantity);
+  const toggleWishlist = useAppStore((state) => state.toggleWishlist);
+  const wishlistItems = useAppStore((state) => state.wishlistItems);
+  const qty = useAppStore((state) => state.getQuantity(product.id));
+  const isSaved = wishlistItems.some((item) => item.id === product.id);
   const addScale = useSharedValue(1);
   const counterOpacity = useSharedValue(0);
   const counterScale = useSharedValue(0.94);

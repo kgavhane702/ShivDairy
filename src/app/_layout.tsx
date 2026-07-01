@@ -3,7 +3,6 @@ import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Animated, Image, StyleSheet, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { CartProvider } from "../features/cart/CartContext";
 import { ThemeProvider } from "../theme/ThemeProvider";
 
 // Ensure the native splash screen does not auto-hide before JS is ready.
@@ -72,18 +71,16 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <CartProvider>
-          <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-            <Stack screenOptions={{ headerShown: false }} />
-            {showOverlay && (
-              <Animated.View style={[styles.overlay, { opacity: overlayOpacity, pointerEvents: 'none' }]}> 
-                <View style={styles.overlayInner}>
-                  <Image source={require('../../assets/images/icon.png')} style={styles.logo} resizeMode="contain" />
-                </View>
-              </Animated.View>
-            )}
-          </View>
-        </CartProvider>
+        <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+          <Stack screenOptions={{ headerShown: false }} />
+          {showOverlay && (
+            <Animated.View style={[styles.overlay, { opacity: overlayOpacity, pointerEvents: 'none' }]}> 
+              <View style={styles.overlayInner}>
+                <Image source={require('../../assets/images/icon.png')} style={styles.logo} resizeMode="contain" />
+              </View>
+            </Animated.View>
+          )}
+        </View>
       </ThemeProvider>
     </SafeAreaProvider>
   );

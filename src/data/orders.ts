@@ -23,6 +23,10 @@ export interface OrderItem {
   products: OrderProduct[];
   deliveryEstimate: string;
   address: string;
+  note: string;
+  subTotal: string;
+  deliveryFee: string;
+  tax: string;
 }
 
 export const orders: OrderItem[] = [
@@ -36,6 +40,10 @@ export const orders: OrderItem[] = [
     summary: 'Fresh vegetables, milk, and citrus fruits',
     deliveryEstimate: 'Delivered on Jun 30, 2026',
     address: '123 Green Street, Pune, MH 411001',
+    note: 'Leave package at the front door if nobody is home.',
+    subTotal: '₹999',
+    deliveryFee: '₹99',
+    tax: '₹147',
     products: [
       { id: 'p1', name: 'Organic Honey', quantity: 1, price: '₹299', image: placeholderImage },
       { id: 'p2', name: 'Fresh Milk', quantity: 1, price: '₹149', image: placeholderImage },
@@ -52,6 +60,10 @@ export const orders: OrderItem[] = [
     summary: 'Grocery staples and snack essentials',
     deliveryEstimate: 'Arriving by Jul 2, 2026',
     address: '123 Green Street, Pune, MH 411001',
+    note: 'Please ring the bell once before leaving the package.',
+    subTotal: '₹699',
+    deliveryFee: '₹80',
+    tax: '₹90',
     products: [
       { id: 'p4', name: 'Whole Wheat Flour', quantity: 1, price: '₹249', image: placeholderImage },
       { id: 'p5', name: 'Masala Chips', quantity: 1, price: '₹179', image: placeholderImage },
@@ -67,6 +79,10 @@ export const orders: OrderItem[] = [
     summary: 'Weekly essentials with doorstep delivery',
     deliveryEstimate: 'Expected Jul 3, 2026',
     address: '123 Green Street, Pune, MH 411001',
+    note: 'Call before delivery and leave extra curbside supplies.',
+    subTotal: '₹1,599',
+    deliveryFee: '₹149',
+    tax: '₹251',
     products: [
       { id: 'p6', name: 'Paneer', quantity: 1, price: '₹225', image: placeholderImage },
       { id: 'p7', name: 'Ghee', quantity: 1, price: '₹299', image: placeholderImage },

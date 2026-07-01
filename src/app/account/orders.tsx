@@ -1,5 +1,5 @@
 ﻿import { useRouter } from 'expo-router';
-import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import AppHeader from '../../components/AppHeader';
 import Screen from '../../components/Screen';
 import { orders, statusStyles } from '../../data/orders';
@@ -35,12 +35,6 @@ export default function OrdersPage() {
                   <View style={[styles.statusBadge, { backgroundColor: statusStyle.backgroundColor }]}>
                     <Text style={[styles.statusText, { color: statusStyle.color }]}>{item.status}</Text>
                   </View>
-                </View>
-
-                <View style={styles.productPreviewRow}>
-                  {item.products.slice(0, 3).map((product) => (
-                    <Image key={product.id} source={product.image} style={styles.productImage} />
-                  ))}
                 </View>
 
                 <Text style={styles.orderSummary}>{item.summary}</Text>
@@ -112,16 +106,6 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 12,
     fontWeight: '700',
-  },
-  productPreviewRow: {
-    flexDirection: 'row',
-    marginBottom: 12,
-  },
-  productImage: {
-    width: 54,
-    height: 54,
-    borderRadius: 14,
-    marginRight: 10,
   },
   orderSummary: {
     marginBottom: 14,

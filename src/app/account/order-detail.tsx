@@ -1,5 +1,5 @@
 ﻿import { useLocalSearchParams } from 'expo-router';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import AppHeader from '../../components/AppHeader';
 import Screen from '../../components/Screen';
 import { orderMap, statusStyles } from '../../data/orders';
@@ -39,6 +39,36 @@ export default function OrderDetailPage() {
           <Text style={styles.sectionTitle}>Delivery Address</Text>
           <Text style={styles.sectionText}>{order.address}</Text>
         </View>
+
+        <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>Billing Summary</Text>
+          <View style={styles.billRow}>
+            <Text style={styles.billLabel}>Subtotal</Text>
+            <Text style={styles.billValue}>{order.subTotal}</Text>
+          </View>
+          <View style={styles.billRow}>
+            <Text style={styles.billLabel}>Delivery fee</Text>
+            <Text style={styles.billValue}>{order.deliveryFee}</Text>
+          </View>
+          <View style={styles.billRow}>
+            <Text style={styles.billLabel}>Tax</Text>
+            <Text style={styles.billValue}>{order.tax}</Text>
+          </View>
+          <View style={styles.billDivider} />
+          <View style={[styles.billRow, styles.billTotalRow]}>
+            <Text style={styles.billTotalLabel}>Total</Text>
+            <Text style={styles.billTotalValue}>{order.total}</Text>
+          </View>
+        </View>
+
+        <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>Order Note</Text>
+          <Text style={styles.sectionText}>{order.note}</Text>
+        </View>
+
+        <Pressable style={styles.helpButton} onPress={() => {}}>
+          <Text style={styles.helpButtonText}>Need help with this order?</Text>
+        </Pressable>
 
         <View style={styles.sectionCard}>
           <Text style={styles.sectionTitle}>Items</Text>
@@ -155,5 +185,53 @@ const styles = StyleSheet.create({
   itemDetails: {
     fontSize: 13,
     color: '#6b7280',
+  },
+  billRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  billLabel: {
+    color: '#6b7280',
+    fontSize: 14,
+  },
+  billValue: {
+    color: '#111827',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  billDivider: {
+    height: 1,
+    backgroundColor: '#e5e7eb',
+    marginVertical: 10,
+  },
+  billTotalRow: {
+    marginTop: 6,
+  },
+  billTotalLabel: {
+    color: '#111827',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  billTotalValue: {
+    color: '#111827',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  helpButton: {
+    backgroundColor: '#eff6ff',
+    paddingVertical: 14,
+    paddingHorizontal: 18,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#bfdbfe',
+    marginBottom: 14,
+  },
+  helpButtonText: {
+    color: '#1d4ed8',
+    fontSize: 14,
+    fontWeight: '700',
+    textAlign: 'center',
   },
 });

@@ -40,7 +40,7 @@ export default function BottomTabs() {
   const activeTab = (tab: string) => pathname === tab || pathname === `${tab}/index`;
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.card, borderTopColor: theme.colors.border }]}> 
+    <View style={[styles.container, { backgroundColor: 'rgba(255,255,255,0.78)', borderTopColor: 'rgba(255,255,255,0.65)' }]}> 
       <TabButton
         label="Home"
         icon="🏠"
@@ -62,25 +62,31 @@ export default function BottomTabs() {
         }}
       />
       <TabButton label="Offers" icon="🎁" isActive={false} onPress={() => {}} />
-      <TabButton
-        label="Cart"
-        icon="🛒"
-        isActive={activeTab('/cart')}
-        onPress={() => {
-          if (!activeTab('/cart')) {
-            router.push('/cart');
-          }
-        }}
-      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flexDirection: 'row', justifyContent: 'space-around', paddingVertical: 8, borderTopWidth: StyleSheet.hairlineWidth, width: '100%' },
-  tabButton: { alignItems: 'center', paddingVertical: 4, paddingHorizontal: 8, borderRadius: 16 },
-  activeTab: { paddingHorizontal: 12, borderRadius: 16 },
-  icon: { fontSize: 18, marginBottom: 2 },
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 10,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    width: '100%',
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -10 },
+    shadowOpacity: 0.08,
+    shadowRadius: 18,
+    elevation: 24,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    overflow: 'hidden',
+    borderColor: 'rgba(255,255,255,0.7)',
+  },
+  tabButton: { alignItems: 'center', paddingVertical: 6, paddingHorizontal: 12, borderRadius: 20 },
+  activeTab: { paddingHorizontal: 12, borderRadius: 20, backgroundColor: 'rgba(79,70,229,0.12)' },
+  icon: { fontSize: 18, marginBottom: 4 },
   activeIcon: {},
   label: { fontSize: 10 },
   activeLabel: { fontWeight: '700' },

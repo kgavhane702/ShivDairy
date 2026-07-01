@@ -41,6 +41,11 @@ export default function ProductCard({ product }: { product: Product }) {
     <View style={[styles.card, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}> 
       <View style={[styles.imageWrap, { backgroundColor: theme.colors.surface }]}> 
         <Image source={product.image} style={styles.imagePlaceholder} resizeMode="cover" />
+        {qty > 0 ? (
+          <View style={styles.countBadge}>
+            <Text style={styles.countBadgeText}>{qty}</Text>
+          </View>
+        ) : null}
         <TouchableOpacity
           style={[styles.heartButton, isSaved && styles.heartButtonActive]}
           onPress={() => toggleWishlist(product)}
@@ -117,6 +122,24 @@ const styles = StyleSheet.create({
   old: { textDecorationLine: 'line-through', fontSize: 12 },
   add: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   addText: { color: '#fff', fontWeight: '700', fontSize: 12 },
+  countBadge: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    minWidth: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#0a8a3e',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 8,
+    zIndex: 5,
+  },
+  countBadgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '700',
+  },
   counter: { flexDirection: 'row', alignItems: 'center', borderRadius: 18, overflow: 'hidden', borderWidth: 1 },
   counterBtn: { paddingHorizontal: 10, paddingVertical: 6 },
   counterSign: { fontSize: 16, fontWeight: '700' },

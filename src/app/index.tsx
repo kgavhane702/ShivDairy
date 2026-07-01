@@ -1,14 +1,16 @@
 import { ScrollView, View } from "react-native";
-import BannerCarousel from "../components/BannerCarousel";
 import BottomTabs from "../components/BottomTabs";
 import Categories from "../components/Categories";
-import DealsRow from "../components/DealsRow";
 import Screen from "../components/Screen";
 import SearchBar from "../components/SearchBar";
-import SubscriptionBanner from "../components/SubscriptionBanner";
 import TopBar from "../components/TopBar";
-import Trending from "../components/Trending";
 import { useTheme } from "../theme/ThemeProvider";
+import Deferred from "../utils/Deferred";
+
+const BannerCarousel = (props: any) => <Deferred loader={() => import('../components/BannerCarousel')} props={props} />;
+const Trending = (props: any) => <Deferred loader={() => import('../components/Trending')} props={props} />;
+const DealsRow = (props: any) => <Deferred loader={() => import('../components/DealsRow')} props={props} />;
+const SubscriptionBanner = (props: any) => <Deferred loader={() => import('../components/SubscriptionBanner')} props={props} />;
 
 export default function Index() {
   const { theme } = useTheme();

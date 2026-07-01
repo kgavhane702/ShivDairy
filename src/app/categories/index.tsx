@@ -54,7 +54,7 @@ export default function CategoriesPage() {
               <View style={styles.grid}>
                 {section.items.map((item) => (
                   <View key={item.title} style={styles.card}>
-                    <Image source={item.image} style={styles.cardImage} />
+                    <Image source={item.image} style={styles.cardImage} resizeMode="cover" />
                     <View style={styles.cardContent}>
                       <Text style={styles.cardText}>{item.title}</Text>
                     </View>
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 18, fontWeight: '700', marginBottom: 12, color: '#111827' },
   grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
   card: { width: '47%', borderRadius: 16, backgroundColor: '#fff', marginBottom: 12, overflow: 'hidden', borderWidth: 1, borderColor: '#eceef2' },
-  cardImage: { width: '100%', height: 90, resizeMode: 'cover' },
+  cardImage: { width: '100%', height: 90 },
   cardContent: { minHeight: 60, justifyContent: 'center', padding: 12 },
   cardText: { fontSize: 13, lineHeight: 18, fontWeight: '700', color: '#1f2937' },
 });

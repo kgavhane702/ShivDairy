@@ -13,6 +13,10 @@ type CartContextValue = {
   setAppliedCouponCode: (code: string | null) => void;
   summary: CartSummary;
   clearCart: () => void;
+  wishlistItems: Product[];
+  toggleWishlist: (product: Product) => void;
+  removeFromWishlist: (productId: string) => void;
+  isInWishlist: (productId: string) => boolean;
 };
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
@@ -20,6 +24,7 @@ const CartContext = createContext<CartContextValue | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
+  const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
 
   const addItem = (product: Product) => {
     setItems((current) => {
@@ -50,6 +55,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems([]);
     setAppliedCouponCode(null);
   };
+
+  const toggleWishlist = (product: Product) => {
+    setWishlistItems((current) => {
+      const exists = current.some((item) => item.id === product.id);
+      if (exists) {
+        return current.filter((item) => item.id !== product.id);
+      }
+
+      return [...current, product];
+    });
+  };
+
+  const removeFromWishlist = (productId: string) => {
+    setWishlistItems((current) => current.filter((item) => item.id !== productId));
+  };
+
+  const isInWishlist = (productId: string) => wishlistItems.some((item) => item.id === productId);
 
   const getQuantity = (productId: string) => items.find((item) => item.id === productId)?.quantity ?? 0;
 
@@ -83,6 +105,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setAppliedCouponCode,
         summary,
         clearCart,
+        wishlistItems,
+        toggleWishlist,
+        removeFromWishlist,
+        isInWishlist,
       }}
     >
       {children}

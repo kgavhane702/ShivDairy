@@ -7,8 +7,9 @@ import { useTheme } from "../theme/ThemeProvider";
 
 export default function ProductCard({ product }: { product: Product }) {
   const { theme } = useTheme();
-  const { addItem, getQuantity, updateQuantity } = useCart();
+  const { addItem, getQuantity, updateQuantity, toggleWishlist, isInWishlist } = useCart();
   const qty = getQuantity(product.id);
+  const isSaved = isInWishlist(product.id);
   const addScale = useSharedValue(1);
   const counterOpacity = useSharedValue(0);
   const counterScale = useSharedValue(0.94);
@@ -36,7 +37,14 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <View style={[styles.card, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}> 
       <View style={[styles.imageWrap, { backgroundColor: theme.colors.surface }]}> 
-        <Image source={product.image} style={styles.imagePlaceholder} />
+        <Image source={product.image} style={styles.imagePlaceholder} resizeMode="cover" />
+        <TouchableOpacity
+          style={[styles.heartButton, isSaved && styles.heartButtonActive]}
+          onPress={() => toggleWishlist(product)}
+          activeOpacity={0.9}
+        >
+          <Text style={[styles.heartIcon, isSaved && styles.heartIconActive]}>{isSaved ? '♥' : '♡'}</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.body}>
         <Text style={[styles.title, { color: theme.colors.text }]}>{product.title}</Text>
@@ -72,14 +80,32 @@ const styles = StyleSheet.create({
     marginRight: 12,
     overflow: 'hidden',
     borderWidth: 1,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
     elevation: 3,
   },
-  imageWrap: { width: '100%', height: 100, padding: 8 },
-  imagePlaceholder: { width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10 },
+  imageWrap: { width: '100%', height: 100, padding: 8, position: 'relative' },
+  imagePlaceholder: { width: '100%', height: '100%', borderRadius: 10 },
+  heartButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.92)',
+  },
+  heartButtonActive: {
+    backgroundColor: '#fff1f2',
+  },
+  heartIcon: {
+    fontSize: 15,
+    color: '#64748b',
+  },
+  heartIconActive: {
+    color: '#ef4444',
+  },
   body: { padding: 12 },
   title: { fontSize: 13, marginBottom: 4, fontWeight: '700' },
   sub: { fontSize: 12, marginBottom: 6 },

@@ -1,6 +1,6 @@
+import AddressMap from '@/components/AddressMap';
 import { useEffect, useRef, useState } from 'react';
 import { FlatList, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import AddressMap from '../../components/AddressMap';
 import AppHeader from '../../components/AppHeader';
 import Screen from '../../components/Screen';
 import { useTheme } from '../../theme/ThemeProvider';
@@ -429,10 +429,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     borderWidth: 1,
     borderColor: 'transparent',
-    shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.04)',
     elevation: 2,
   },
   defaultCard: {
@@ -659,10 +656,7 @@ const styles = StyleSheet.create({
     borderColor: '#e5e7eb',
     maxHeight: 240,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 8 },
+    boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.08)',
     elevation: 6,
     zIndex: 30,
   },

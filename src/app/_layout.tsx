@@ -76,9 +76,9 @@ export default function RootLayout() {
           <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
             <Stack screenOptions={{ headerShown: false }} />
             {showOverlay && (
-              <Animated.View pointerEvents="none" style={[styles.overlay, { opacity: overlayOpacity }]}> 
+              <Animated.View style={[styles.overlay, { opacity: overlayOpacity, pointerEvents: 'none' }]}> 
                 <View style={styles.overlayInner}>
-                  <Image source={require('../../assets/images/icon.png')} style={styles.logo} />
+                  <Image source={require('../../assets/images/icon.png')} style={styles.logo} resizeMode="contain" />
                 </View>
               </Animated.View>
             )}
@@ -98,5 +98,5 @@ const styles = StyleSheet.create({
     zIndex: 9999,
   },
   overlayInner: { alignItems: 'center' },
-  logo: { width: 160, height: 160, resizeMode: 'contain', borderRadius: 24 },
+  logo: { width: 160, height: 160, borderRadius: 24 },
 });

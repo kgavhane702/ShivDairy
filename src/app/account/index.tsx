@@ -148,10 +148,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.05)',
     elevation: 2,
   },
   iconItemPressed: {

@@ -32,7 +32,13 @@ export default function AccountPage() {
         </View>
       </View>
 
-      <ScrollView style={styles.scroll} contentContainerStyle={{padding:16, paddingTop:8, paddingBottom: 16 + insets.bottom}}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={{padding:16, paddingTop:8, paddingBottom: 16 + insets.bottom}}
+        bounces={false}
+        alwaysBounceVertical={false}
+        overScrollMode="never"
+      >
         <View style={styles.listItem}><Text style={styles.listText}>My Wishlist</Text></View>
         <View style={styles.listItem}><Text style={styles.listText}>Shopping lists</Text></View>
         <View style={styles.listItem}><Text style={styles.listText}>Saved Payments</Text></View>

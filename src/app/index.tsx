@@ -18,6 +18,10 @@ export default function Index() {
       <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
         <ScrollView
           showsVerticalScrollIndicator={false}
+          // Disable overscroll bounce on iOS and Android where supported
+          bounces={false}
+          alwaysBounceVertical={false}
+          overScrollMode="never"
           style={{ flex: 1, backgroundColor: theme.colors.background }}
           contentContainerStyle={{ paddingBottom: 24 }}
           stickyHeaderIndices={[1]}

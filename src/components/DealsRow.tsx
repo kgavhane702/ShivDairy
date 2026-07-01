@@ -1,12 +1,6 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
+import { dealProducts } from "../data/catalog";
 import ProductCard from "./ProductCard";
-
-const deals = [
-  { id: '1', title: 'Amul Butter', price: '265' },
-  { id: '2', title: 'Aashirvaad Atta', price: '249' },
-  { id: '3', title: 'Fortune Sunlite', price: '135' },
-  { id: '4', title: 'Tata Salt', price: '17' },
-];
 
 export default function DealsRow() {
   return (
@@ -16,12 +10,15 @@ export default function DealsRow() {
         <Text style={{ color: '#888' }}>View all</Text>
       </View>
       <FlatList
-        data={deals}
+        data={dealProducts}
         keyExtractor={(i) => i.id}
         horizontal
+        bounces={false}
+        alwaysBounceHorizontal={false}
+        overScrollMode="never"
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingRight: 16, paddingVertical: 4 }}
-        renderItem={({ item }) => <ProductCard title={item.title} price={item.price} />}
+        renderItem={({ item }) => <ProductCard product={item} />}
       />
     </View>
   );

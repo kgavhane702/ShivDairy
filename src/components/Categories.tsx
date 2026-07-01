@@ -1,18 +1,10 @@
 import { useEffect } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
+import { categories } from "../data/catalog";
 import { useTheme } from "../theme/ThemeProvider";
 
-const items = [
-  { key: 'Milk & Dairy' },
-  { key: 'Vegetables' },
-  { key: 'Fruits' },
-  { key: 'Eggs' },
-  { key: 'Meat & Fish' },
-  { key: 'Grocery' },
-];
-
-function CategoryTile({ label, theme }: { label: string; theme: any }) {
+function CategoryTile({ category, theme }: { category: { id: string; title: string; icon: string; description: string }; theme: any }) {
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.95);
 
@@ -29,9 +21,9 @@ function CategoryTile({ label, theme }: { label: string; theme: any }) {
   return (
     <Animated.View style={[styles.item, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }, animatedStyle]}> 
       <View style={[styles.iconWrap, { backgroundColor: theme.colors.surface }]}> 
-        <Image source={require('../../assets/fruits-and-vegetables.png')} style={styles.icon} />
+        <Text style={styles.icon}>{category.icon}</Text>
       </View>
-      <Text style={[styles.label, { color: theme.colors.textSecondary }]}>{label}</Text>
+      <Text style={[styles.label, { color: theme.colors.textSecondary }]}>{category.title}</Text>
     </Animated.View>
   );
 }
@@ -42,8 +34,8 @@ export default function Categories() {
     <View style={styles.section}>
       <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Shop by Category</Text>
       <View style={styles.grid}>
-        {items.map((it) => (
-          <CategoryTile key={it.key} label={it.key} theme={theme} />
+        {categories.map((item) => (
+          <CategoryTile key={item.id} category={item} theme={theme} />
         ))}
       </View>
     </View>

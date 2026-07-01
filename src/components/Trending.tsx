@@ -1,12 +1,6 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
+import { featuredProducts } from "../data/catalog";
 import ProductCard from "./ProductCard";
-
-const trending = [
-  { id: '1', title: 'Organic Honey', price: '299' },
-  { id: '2', title: 'Masala Combo', price: '149' },
-  { id: '3', title: 'Basmati Rice', price: '359' },
-  { id: '4', title: 'Fresh Paneer', price: '225' },
-];
 
 export default function Trending() {
   return (
@@ -16,12 +10,15 @@ export default function Trending() {
         <Text style={styles.viewAll}>See all</Text>
       </View>
       <FlatList
-        data={trending}
+        data={featuredProducts}
         keyExtractor={(item) => item.id}
         horizontal
+        bounces={false}
+        alwaysBounceHorizontal={false}
+        overScrollMode="never"
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => <ProductCard title={item.title} price={item.price} />}
+        renderItem={({ item }) => <ProductCard product={item} />}
       />
     </View>
   );

@@ -1,52 +1,45 @@
 import { useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import AppHeader from '../../components/AppHeader';
 import Screen from '../../components/Screen';
-
-const initialItems = [
-  { id: '1', title: 'Bananas (1 kg)', price: 40, qty: 2, image: require('../../../assets/fruits-and-vegetables.png') },
-  { id: '2', title: 'Milk (1 L)', price: 55, qty: 1, image: require('../../../assets/fruits-and-vegetables.png') },
-  { id: '3', title: 'Bread - Whole Wheat', price: 35, qty: 1, image: require('../../../assets/fruits-and-vegetables.png') },
-];
-
-const coupons = [
-  { id: 'c1', code: 'SAVE10', desc: '10% off on orders above ₹200', value: 0.1 },
-  { id: 'c2', code: 'FLAT50', desc: '₹50 off', value: 50 },
-];
+import { coupons } from '../../data/catalog';
+import { useCart } from '../../features/cart/CartContext';
 
 export default function CartPage() {
   const router = useRouter();
-  const [items, setItems] = useState(initialItems);
-  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
-
-  const subtotal = useMemo(() => items.reduce((s, it) => s + it.price * it.qty, 0), [items]);
-  const discount = useMemo(() => {
-    if (!appliedCoupon) return 0;
-    const c = coupons.find((c) => c.code === appliedCoupon);
-    if (!c) return 0;
-    return typeof c.value === 'number' && c.value < 1 ? Math.round(subtotal * c.value) : c.value;
-  }, [appliedCoupon, subtotal]);
-  const delivery = subtotal > 199 ? 0 : 30;
-  const total = subtotal - discount + delivery;
-
-  function updateQty(id: string, delta: number) {
-    setItems((prev) => prev.map((it) => it.id === id ? { ...it, qty: Math.max(0, it.qty + delta) } : it));
-  }
+  const { items, updateQuantity, appliedCouponCode, setAppliedCouponCode, summary } = useCart();
+  const isEmpty = items.length === 0;
 
   return (
     <Screen backgroundColor="#fff" contentStyle={{ backgroundColor: '#fff' }}>
       <View style={styles.page}>
         <AppHeader title="Cart" backgroundColor="#fff" />
 
-        <ScrollView contentContainerStyle={[styles.container, { paddingBottom: 180 }]}>
+        {isEmpty ? (
+          <View style={styles.emptyStateContainer}>
+            <View style={styles.emptyIcon}>
+              <Text style={styles.emptyIconText}>🛒</Text>
+            </View>
+            <Text style={styles.emptyTitle}>Your cart is getting lonely</Text>
+            <Text style={styles.emptySubtitle}>Fill it up with all things good!</Text>
+            <TouchableOpacity style={styles.emptyButton} activeOpacity={0.85} onPress={() => router.push('/')}> 
+              <Text style={styles.emptyButtonText}>Start Shopping</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <ScrollView
+            contentContainerStyle={[styles.container, { paddingBottom: 180 }]}
+            bounces={false}
+            alwaysBounceVertical={false}
+            overScrollMode="never"
+          >
         <View style={styles.couponsSection}>
           <Text style={styles.sectionTitle}>Available Coupons</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }} contentContainerStyle={{ paddingRight: 16 }}>
             {coupons.map((c) => (
-              <TouchableOpacity key={c.id} style={[styles.coupon, appliedCoupon === c.code ? styles.couponActive : undefined]} onPress={() => setAppliedCoupon(c.code)}>
+              <TouchableOpacity key={c.id} style={[styles.coupon, appliedCouponCode === c.code ? styles.couponActive : undefined]} onPress={() => setAppliedCouponCode(c.code)}>
                 <Text style={styles.couponCode}>{c.code}</Text>
-                <Text style={styles.couponDesc}>{c.desc}</Text>
+                <Text style={styles.couponDesc}>{c.description}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -60,13 +53,13 @@ export default function CartPage() {
                 <Text style={styles.title}>{it.title}</Text>
                 <Text style={styles.meta}>₹{it.price}</Text>
                 <View style={styles.qtyRow}>
-                  <TouchableOpacity style={styles.qtyBtn} activeOpacity={0.8} onPress={() => updateQty(it.id, -1)}><Text style={styles.qtySign}>-</Text></TouchableOpacity>
-                  <View style={styles.qtyCount}><Text style={styles.qtyText}>{it.qty}</Text></View>
-                  <TouchableOpacity style={styles.qtyBtn} activeOpacity={0.8} onPress={() => updateQty(it.id, +1)}><Text style={styles.qtySign}>+</Text></TouchableOpacity>
+                  <TouchableOpacity style={styles.qtyBtn} activeOpacity={0.8} onPress={() => updateQuantity(it.id, -1)}><Text style={styles.qtySign}>-</Text></TouchableOpacity>
+                  <View style={styles.qtyCount}><Text style={styles.qtyText}>{it.quantity}</Text></View>
+                  <TouchableOpacity style={styles.qtyBtn} activeOpacity={0.8} onPress={() => updateQuantity(it.id, +1)}><Text style={styles.qtySign}>+</Text></TouchableOpacity>
                 </View>
               </View>
               <View style={styles.priceWrap}>
-                <Text style={styles.price}>₹{it.price * it.qty}</Text>
+                <Text style={styles.price}>₹{it.price * it.quantity}</Text>
               </View>
             </View>
           ))}
@@ -74,23 +67,25 @@ export default function CartPage() {
 
         <View style={styles.summarySection}>
           <Text style={styles.sectionTitle}>Bill Summary</Text>
-          <View style={styles.summaryRow}><Text style={styles.summaryLabel}>Subtotal</Text><Text>₹{subtotal}</Text></View>
-          <View style={styles.summaryRow}><Text style={styles.summaryLabel}>Discount</Text><Text>- ₹{discount}</Text></View>
-          <View style={styles.summaryRow}><Text style={styles.summaryLabel}>Delivery</Text><Text>₹{delivery}</Text></View>
-          <View style={[styles.summaryRow, { marginTop: 8 }]}><Text style={[styles.summaryLabel, { fontWeight: '800' }]}>Total</Text><Text style={{ fontWeight: '800' }}>₹{total}</Text></View>
+          <View style={styles.summaryRow}><Text style={styles.summaryLabel}>Subtotal</Text><Text>₹{summary.subtotal}</Text></View>
+          <View style={styles.summaryRow}><Text style={styles.summaryLabel}>Discount</Text><Text>- ₹{summary.discount}</Text></View>
+          <View style={styles.summaryRow}><Text style={styles.summaryLabel}>Delivery</Text><Text>₹{summary.delivery}</Text></View>
+          <View style={[styles.summaryRow, { marginTop: 8 }]}><Text style={[styles.summaryLabel, { fontWeight: '800' }]}>Total</Text><Text style={{ fontWeight: '800' }}>₹{summary.total}</Text></View>
         </View>
 
       </ScrollView>
-
+        )}
+        {!isEmpty && (
         <View style={styles.footer}> 
           <View style={styles.footerInner}>
             <View style={styles.leftBox} />
             <TouchableOpacity style={styles.placeOrderBtn} activeOpacity={0.85} onPress={() => router.push('/checkout')}>
               <Text style={styles.placeLabel}>Place order</Text>
-              <Text style={styles.placePrice}>₹{total}</Text>
+              <Text style={styles.placePrice}>₹{summary.total}</Text>
             </TouchableOpacity>
           </View>
         </View>
+        )}
       </View>
     </Screen>
   );
@@ -126,6 +121,13 @@ const styles = StyleSheet.create({
   itemsSection: { marginTop: 6 },
   summarySection: { marginTop: 18, paddingBottom: 40 },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6 },
+  emptyStateContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 24 },
+  emptyIcon: { width: 140, height: 140, borderRadius: 80, backgroundColor: '#edf2ff', alignItems: 'center', justifyContent: 'center', marginBottom: 24 },
+  emptyIconText: { fontSize: 64 },
+  emptyTitle: { fontSize: 22, fontWeight: '800', marginBottom: 10, textAlign: 'center', color: '#111827' },
+  emptySubtitle: { fontSize: 14, color: '#6b7280', textAlign: 'center', marginBottom: 24, lineHeight: 20 },
+  emptyButton: { backgroundColor: '#2563eb', borderRadius: 999, paddingVertical: 14, paddingHorizontal: 28 },
+  emptyButtonText: { color: '#fff', fontWeight: '700', fontSize: 16 },
   summaryLabel: { color: '#374151' },
   footerInner: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   leftBox: { width: 140, height: 52 },

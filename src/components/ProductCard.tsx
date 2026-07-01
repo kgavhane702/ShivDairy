@@ -1,11 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
+import type { Product } from "../domain/types";
+import { useCart } from "../features/cart/CartContext";
 import { useTheme } from "../theme/ThemeProvider";
 
-export default function ProductCard({ title, price }: { title: string; price: string }) {
+export default function ProductCard({ product }: { product: Product }) {
   const { theme } = useTheme();
-  const [qty, setQty] = useState<number>(0);
+  const { addItem, getQuantity, updateQuantity } = useCart();
+  const qty = getQuantity(product.id);
   const addScale = useSharedValue(1);
   const counterOpacity = useSharedValue(0);
   const counterScale = useSharedValue(0.94);
@@ -27,21 +30,21 @@ export default function ProductCard({ title, price }: { title: string; price: st
   const handleAdd = () => {
     addScale.value = withSpring(1.05, { damping: 12, stiffness: 260 });
     addScale.value = withTiming(1, { duration: 140 });
-    setQty(1);
+    addItem(product);
   };
 
   return (
     <View style={[styles.card, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}> 
       <View style={[styles.imageWrap, { backgroundColor: theme.colors.surface }]}> 
-        <Image source={require('../../assets/fruits-and-vegetables.png')} style={styles.imagePlaceholder} />
+        <Image source={product.image} style={styles.imagePlaceholder} />
       </View>
       <View style={styles.body}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>{title}</Text>
-        <Text style={[styles.sub, { color: theme.colors.textSecondary }]}>500 g</Text>
+        <Text style={[styles.title, { color: theme.colors.text }]}>{product.title}</Text>
+        <Text style={[styles.sub, { color: theme.colors.textSecondary }]}>{product.unit}</Text>
         <View style={styles.row}>
           <View>
-            <Text style={[styles.price, { color: theme.colors.text }]}>₹{price}</Text>
-            <Text style={[styles.old, { color: theme.colors.textSecondary }]}>₹{Math.round(Number(price) * 1.2)}</Text>
+            <Text style={[styles.price, { color: theme.colors.text }]}>₹{product.price}</Text>
+            <Text style={[styles.old, { color: theme.colors.textSecondary }]}>₹{Math.round(product.price * 1.2)}</Text>
           </View>
           {qty === 0 ? (
             <Animated.View style={addAnimatedStyle}>
@@ -51,9 +54,9 @@ export default function ProductCard({ title, price }: { title: string; price: st
             </Animated.View>
           ) : (
             <Animated.View style={[styles.counter, { backgroundColor: theme.colors.muted, borderColor: theme.colors.border }, counterAnimatedStyle]}> 
-              <TouchableOpacity style={styles.counterBtn} onPress={() => setQty(Math.max(0, qty - 1))} activeOpacity={0.8}><Text style={[styles.counterSign, { color: theme.colors.text }]}>-</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.counterBtn} onPress={() => updateQuantity(product.id, -1)} activeOpacity={0.8}><Text style={[styles.counterSign, { color: theme.colors.text }]}>-</Text></TouchableOpacity>
               <View style={styles.counterValue}><Text style={[styles.counterText, { color: theme.colors.text }]}>{qty}</Text></View>
-              <TouchableOpacity style={styles.counterBtn} onPress={() => setQty(qty + 1)} activeOpacity={0.8}><Text style={[styles.counterSign, { color: theme.colors.text }]}>+</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.counterBtn} onPress={() => updateQuantity(product.id, +1)} activeOpacity={0.8}><Text style={[styles.counterSign, { color: theme.colors.text }]}>+</Text></TouchableOpacity>
             </Animated.View>
           )}
         </View>

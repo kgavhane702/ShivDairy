@@ -40,7 +40,14 @@ export default function CategoriesPage() {
       <View style={styles.page}>
         <AppHeader title="Categories" backgroundColor="#fff" />
 
-        <ScrollView style={styles.body} contentContainerStyle={[styles.container, { paddingBottom: 32 + insets.bottom }] }>
+        <ScrollView
+          style={styles.body}
+          contentContainerStyle={[styles.container, { paddingBottom: 32 + insets.bottom }] }
+          // disable overscroll when content doesn't need scrolling
+          bounces={false}
+          alwaysBounceVertical={false}
+          overScrollMode="never"
+        >
           {sections.map((section) => (
             <View key={section.title} style={styles.section}>
               <Text style={styles.sectionTitle}>{section.title}</Text>

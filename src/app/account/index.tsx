@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppHeader from '../../components/AppHeader';
 import Screen from '../../components/Screen';
@@ -23,37 +23,102 @@ export default function AccountPage() {
               <Text style={styles.sub}>kgavhane702@gmail.com</Text>
             </View>
           </View>
+          <View style={styles.profileSummary}>
+            <Text style={styles.profileSummaryText}>Personal details, orders, and saved preferences in one place.</Text>
+          </View>
         </View>
 
-        <View style={[styles.iconRow, {marginTop: 6}] }>
-          <View style={styles.iconItem}><Text style={styles.iconEmoji}>📅</Text><Text style={styles.iconLabel}>Subscriptions</Text></View>
-          <View style={styles.iconItem}><Text style={styles.iconEmoji}>🧾</Text><Text style={styles.iconLabel}>Orders</Text><Text style={{color:'#0a8a3e', fontWeight:'700'}}>₹25</Text></View>
-          <View style={styles.iconItem}><Text style={styles.iconEmoji}>📍</Text><Text style={styles.iconLabel}>Address</Text></View>
+        <View style={[styles.iconRow, { marginTop: 6 }] }>
+          <Pressable onPress={() => router.push('/account/subscriptions')} style={({ pressed }) => [styles.iconItem, pressed && styles.iconItemPressed]}>
+            <Text style={styles.iconEmoji}>📅</Text>
+            <Text style={styles.iconLabel}>Subscriptions</Text>
+          </Pressable>
+          <Pressable onPress={() => router.push('/account/orders')} style={({ pressed }) => [styles.iconItem, pressed && styles.iconItemPressed]}>
+            <Text style={styles.iconEmoji}>🧾</Text>
+            <Text style={styles.iconLabel}>Orders</Text>
+            <Text style={styles.iconBadge}>₹25</Text>
+          </Pressable>
+          <Pressable onPress={() => router.push('/account/address')} style={({ pressed }) => [styles.iconItem, pressed && styles.iconItemPressed]}>
+            <Text style={styles.iconEmoji}>📍</Text>
+            <Text style={styles.iconLabel}>Address</Text>
+          </Pressable>
         </View>
       </View>
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={{padding:16, paddingTop:8, paddingBottom: 16 + insets.bottom}}
+        contentContainerStyle={{ padding: 16, paddingTop: 8, paddingBottom: 16 + insets.bottom }}
         bounces={false}
         alwaysBounceVertical={false}
         overScrollMode="never"
       >
-        <View style={styles.listItem}><Text style={styles.listText}>My Wishlist</Text></View>
-        <View style={styles.listItem}><Text style={styles.listText}>Shopping lists</Text></View>
-        <View style={styles.listItem}><Text style={styles.listText}>Saved Payments</Text></View>
-        <View style={styles.listItem}><Text style={styles.listText}>Ratings & Reviews</Text></View>
-        <View style={styles.listItem}><Text style={styles.listText}>NeuCard</Text></View>
-        <View style={styles.listItem}><Text style={styles.listText}>Support & FAQs</Text></View>
-        <View style={styles.listItem}><Text style={styles.listText}>My Gift Cards</Text></View>
-        <View style={styles.listItem}><Text style={styles.listText}>Notifications</Text></View>
-        <View style={styles.listItem}><Text style={styles.listText}>Manage Subscriptions</Text></View>
-        <View style={styles.listItem}><Text style={styles.listText}>Saved Addresses</Text></View>
-        <View style={styles.listItem}><Text style={styles.listText}>Payment Methods</Text></View>
-        <View style={styles.listItem}><Text style={styles.listText}>Privacy Settings</Text></View>
-        <View style={styles.listItem}><Text style={styles.listText}>Order History</Text></View>
-        <View style={styles.listItem}><Text style={styles.listText}>Preferences</Text></View>
-        <View style={styles.listItem}><Text style={styles.listText}>Refer & Earn</Text></View>
+        <Pressable onPress={() => router.push('/account/wishlist')} style={({ pressed }) => [styles.listItem, pressed && styles.listItemPressed]}>
+          <View style={styles.listItemContent}>
+            <Text style={styles.listText}>My Wishlist</Text>
+            <Text style={styles.listChevron}>›</Text>
+          </View>
+        </Pressable>
+        <Pressable onPress={() => router.push('/account/shopping-lists')} style={({ pressed }) => [styles.listItem, pressed && styles.listItemPressed]}>
+          <View style={styles.listItemContent}>
+            <Text style={styles.listText}>Shopping lists</Text>
+            <Text style={styles.listChevron}>›</Text>
+          </View>
+        </Pressable>
+        <Pressable onPress={() => router.push('/account/saved-payments')} style={({ pressed }) => [styles.listItem, pressed && styles.listItemPressed]}>
+          <View style={styles.listItemContent}>
+            <Text style={styles.listText}>Saved Payments</Text>
+            <Text style={styles.listChevron}>›</Text>
+          </View>
+        </Pressable>
+        <Pressable onPress={() => router.push('/account/ratings-reviews')} style={({ pressed }) => [styles.listItem, pressed && styles.listItemPressed]}>
+          <View style={styles.listItemContent}>
+            <Text style={styles.listText}>Ratings & Reviews</Text>
+            <Text style={styles.listChevron}>›</Text>
+          </View>
+        </Pressable>
+
+        <Pressable onPress={() => router.push('/account/support')} style={({ pressed }) => [styles.listItem, pressed && styles.listItemPressed]}>
+          <View style={styles.listItemContent}>
+            <Text style={styles.listText}>Support & FAQs</Text>
+            <Text style={styles.listChevron}>›</Text>
+          </View>
+        </Pressable>
+        <Pressable onPress={() => router.push('/account/gift-cards')} style={({ pressed }) => [styles.listItem, pressed && styles.listItemPressed]}>
+          <View style={styles.listItemContent}>
+            <Text style={styles.listText}>My Gift Cards</Text>
+            <Text style={styles.listChevron}>›</Text>
+          </View>
+        </Pressable>
+        <Pressable onPress={() => router.push('/account/notifications')} style={({ pressed }) => [styles.listItem, pressed && styles.listItemPressed]}>
+          <View style={styles.listItemContent}>
+            <Text style={styles.listText}>Notifications</Text>
+            <Text style={styles.listChevron}>›</Text>
+          </View>
+        </Pressable>
+        <Pressable onPress={() => router.push('/account/payment-methods')} style={({ pressed }) => [styles.listItem, pressed && styles.listItemPressed]}>
+          <View style={styles.listItemContent}>
+            <Text style={styles.listText}>Payment Methods</Text>
+            <Text style={styles.listChevron}>›</Text>
+          </View>
+        </Pressable>
+        <Pressable onPress={() => router.push('/account/privacy-settings')} style={({ pressed }) => [styles.listItem, pressed && styles.listItemPressed]}>
+          <View style={styles.listItemContent}>
+            <Text style={styles.listText}>Privacy Settings</Text>
+            <Text style={styles.listChevron}>›</Text>
+          </View>
+        </Pressable>
+        <Pressable onPress={() => router.push('/account/preferences')} style={({ pressed }) => [styles.listItem, pressed && styles.listItemPressed]}>
+          <View style={styles.listItemContent}>
+            <Text style={styles.listText}>Preferences</Text>
+            <Text style={styles.listChevron}>›</Text>
+          </View>
+        </Pressable>
+        <Pressable onPress={() => router.push('/account/refer-earn')} style={({ pressed }) => [styles.listItem, pressed && styles.listItemPressed]}>
+          <View style={styles.listItemContent}>
+            <Text style={styles.listText}>Refer & Earn</Text>
+            <Text style={styles.listChevron}>›</Text>
+          </View>
+        </Pressable>
 
       </ScrollView>
       </View>
@@ -63,22 +128,81 @@ export default function AccountPage() {
 
 const styles = StyleSheet.create({
   page: { flex:1 },
-  header: { flexDirection:'row', alignItems:'center', paddingHorizontal:16, paddingBottom:12 },
-  back: { padding:8 },
-  backText: { fontSize:18 },
-  title: { fontSize:20, fontWeight:'700', marginLeft:8 },
   profileCard: { marginHorizontal:16, marginTop:12, marginBottom:6, padding:16, borderRadius:12, borderWidth:1, borderColor:'#eceef2', backgroundColor:'#fff' },
   profileRow: { flexDirection:'row', alignItems:'center' },
   avatar: { width:48, height:48, borderRadius:24, backgroundColor:'#f4f6fb', alignItems:'center', justifyContent:'center' },
   name: { fontSize:18, fontWeight:'800' },
   sub: { color:'#666', marginTop:4 },
   scroll: { flex:1 },
-  iconRow: { flexDirection:'row', justifyContent:'space-between', marginBottom:12 },
-  iconItem: { alignItems:'center', width:'30%' },
-  iconEmoji: { fontSize:20, marginBottom:6 },
-  iconLabel: { fontSize:12, color:'#444' },
-  listItem: { paddingVertical:16, borderBottomWidth:1, borderColor:'#f0f0f0' },
-  listText: { fontSize:16 }
-  ,
-  topFixed: { paddingHorizontal: 0 }
+  iconRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+    paddingHorizontal: 4,
+  },
+  iconItem: {
+    flex: 1,
+    marginHorizontal: 4,
+    paddingVertical: 16,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
+  },
+  iconItemPressed: {
+    backgroundColor: '#f2f5ff',
+  },
+  iconEmoji: { fontSize: 20, marginBottom: 8 },
+  iconLabel: { fontSize: 12, color: '#444', textAlign: 'center' },
+  iconBadge: {
+    marginTop: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    backgroundColor: '#e5f5e6',
+    color: '#0a8a3e',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  profileSummary: {
+    marginTop: 14,
+    paddingTop: 14,
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+  },
+  profileSummaryText: {
+    fontSize: 13,
+    lineHeight: 20,
+    color: '#6d6d78',
+  },
+  listItem: {
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderColor: '#f0f0f0',
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+  },
+  listItemPressed: {
+    backgroundColor: '#f2f5ff',
+  },
+  listItemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  listChevron: {
+    fontSize: 18,
+    color: '#ccc',
+  },
+  listText: {
+    fontSize: 16,
+    color: '#121212',
+  },
+  topFixed: { paddingHorizontal: 0 },
 });

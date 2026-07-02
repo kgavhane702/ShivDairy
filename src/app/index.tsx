@@ -39,6 +39,10 @@ export default function Index() {
           <Trending />
           <DealsRow />
           <SubscriptionBanner />
+          <TouchableOpacity style={styles.promoShortcut} onPress={() => router.push('/promotions' as any)}>
+            <Text style={styles.promoShortcutTitle}>Exclusive promos</Text>
+            <Text style={styles.promoShortcutSubtitle}>Tap to view available offers</Text>
+          </TouchableOpacity>
           <View style={{ height: 24 }} />
         </ScrollView>
         {cartCount > 0 && (
@@ -75,4 +79,7 @@ const styles = StyleSheet.create({
   },
   pillText: { color: '#fff', fontWeight: '700', marginRight: 8 },
   pillArrow: { color: '#fff', fontSize: 18, fontWeight: '800' },
+  promoShortcut: { marginHorizontal: 16, marginTop: 12, backgroundColor: '#fff', borderRadius: 18, padding: 16, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 2 },
+  promoShortcutTitle: { fontSize: 15, fontWeight: '700', color: '#111827' },
+  promoShortcutSubtitle: { fontSize: 12, color: '#6b7280', marginTop: 4 },
 });

@@ -61,7 +61,16 @@ export default function BottomTabs() {
           }
         }}
       />
-      <TabButton label="Offers" icon="🎁" isActive={false} onPress={() => {}} />
+      <TabButton
+        label="Admin"
+        icon="⚙️"
+        isActive={activeTab('/admin')}
+        onPress={() => {
+          if (!activeTab('/admin')) {
+            router.push('/admin' as any);
+          }
+        }}
+      />
     </View>
   );
 }

@@ -89,6 +89,12 @@ export default function AccountPage() {
             <Text style={styles.listChevron}>›</Text>
           </View>
         </Pressable>
+        <Pressable onPress={() => router.push('/account/profile')} style={({ pressed }) => [styles.listItem, pressed && styles.listItemPressed]}>
+          <View style={styles.listItemContent}>
+            <Text style={styles.listText}>Profile & Auth</Text>
+            <Text style={styles.listChevron}>›</Text>
+          </View>
+        </Pressable>
         <Pressable onPress={() => router.push('/account/notifications')} style={({ pressed }) => [styles.listItem, pressed && styles.listItemPressed]}>
           <View style={styles.listItemContent}>
             <Text style={styles.listText}>Notifications</Text>

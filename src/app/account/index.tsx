@@ -1,14 +1,18 @@
 import { useRouter } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppHeader from '../../components/AppHeader';
 import Screen from '../../components/Screen';
+import { useAuthStore } from '../../store/authStore';
 import { useTheme } from '../../theme/ThemeProvider';
 
 export default function AccountPage() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const user = useAuthStore((state) => state.user);
+  const signOut = useAuthStore((state) => state.signOut);
+
   return (
     <Screen backgroundColor={theme.colors.background}>
       <View style={[styles.page, { backgroundColor: theme.colors.background }]}> 
@@ -24,8 +28,32 @@ export default function AccountPage() {
             </View>
           </View>
           <View style={styles.profileSummary}>
-            <Text style={styles.profileSummaryText}>Personal details, orders, and saved preferences in one place.</Text>
+            <Text style={styles.profileSummaryText}>{user ? 'Manage your account settings and order history.' : 'Sign in to access orders, saved items, and profile settings.'}</Text>
           </View>
+          <TouchableOpacity
+            style={[styles.authButton, user ? styles.signOutButton : styles.signInButton]}
+            onPress={() => {
+              if (user) {
+                signOut();
+              } else {
+                router.push('/auth/login' as any);
+              }
+            }}
+            activeOpacity={0.9}
+          >
+            <Text style={[styles.authButtonText, user ? styles.signOutButtonText : styles.signInButtonText]}>
+              {user ? 'Sign out' : 'Sign in'}
+            </Text>
+          </TouchableOpacity>
+          {!user ? (
+            <TouchableOpacity
+              style={[styles.authButton, styles.secondaryAuthButton]}
+              onPress={() => router.push('/auth/register' as any)}
+              activeOpacity={0.9}
+            >
+              <Text style={[styles.authButtonText, styles.secondaryAuthButtonText]}>Sign up</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
 
         <View style={[styles.iconRow, { marginTop: 6 }] }>
@@ -177,6 +205,37 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     borderTopWidth: 1,
     borderTopColor: '#f0f0f0',
+  },
+  authButton: {
+    marginTop: 16,
+    borderRadius: 14,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  signInButton: {
+    backgroundColor: '#0a8a3e',
+  },
+  signOutButton: {
+    backgroundColor: '#fee2e2',
+  },
+  authButtonText: {
+    fontWeight: '700',
+    fontSize: 15,
+  },
+  signInButtonText: {
+    color: '#fff',
+  },
+  signOutButtonText: {
+    color: '#b91c1c',
+  },
+  secondaryAuthButton: {
+    marginTop: 10,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#0a8a3e',
+  },
+  secondaryAuthButtonText: {
+    color: '#0a8a3e',
   },
   profileSummaryText: {
     fontSize: 13,

@@ -1,11 +1,22 @@
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Screen from '../../components/Screen';
+import { useAuthStore } from '../../store/authStore';
 import { useTheme } from '../../theme/ThemeProvider';
 
 export default function UserRegisterScreen() {
   const { theme } = useTheme();
   const router = useRouter();
+  const register = useAuthStore((state) => state.register);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const onCreate = () => {
+    register(name, email, password);
+    router.push('/account');
+  };
 
   return (
     <Screen backgroundColor={theme.colors.surface} contentStyle={{ backgroundColor: theme.colors.surface }}>
@@ -16,15 +27,15 @@ export default function UserRegisterScreen() {
           <Text style={styles.subtitle}>Join KrishiKart and start shopping.</Text>
 
           <Text style={styles.label}>Full name</Text>
-          <TextInput placeholder="Aarav Sharma" style={styles.input} placeholderTextColor="#9ca3af" />
+          <TextInput placeholder="Aarav Sharma" style={styles.input} placeholderTextColor="#9ca3af" value={name} onChangeText={setName} />
 
           <Text style={styles.label}>Email</Text>
-          <TextInput placeholder="you@example.com" style={styles.input} placeholderTextColor="#9ca3af" />
+          <TextInput placeholder="you@example.com" style={styles.input} placeholderTextColor="#9ca3af" value={email} onChangeText={setEmail} />
 
           <Text style={styles.label}>Password</Text>
-          <TextInput placeholder="••••••••" style={styles.input} placeholderTextColor="#9ca3af" secureTextEntry />
+          <TextInput placeholder="••••••••" style={styles.input} placeholderTextColor="#9ca3af" secureTextEntry value={password} onChangeText={setPassword} />
 
-          <TouchableOpacity style={styles.button} activeOpacity={0.9} onPress={() => router.push('/auth/login' as any)}>
+          <TouchableOpacity style={styles.button} activeOpacity={0.9} onPress={onCreate}>
             <Text style={styles.buttonText}>Create account</Text>
           </TouchableOpacity>
         </View>

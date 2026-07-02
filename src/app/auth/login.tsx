@@ -1,11 +1,21 @@
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Screen from '../../components/Screen';
+import { useAuthStore } from '../../store/authStore';
 import { useTheme } from '../../theme/ThemeProvider';
 
 export default function UserLoginScreen() {
   const { theme } = useTheme();
   const router = useRouter();
+  const signIn = useAuthStore((state) => state.signIn);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const onSubmit = () => {
+    signIn(email, password);
+    router.push('/account');
+  };
 
   return (
     <Screen backgroundColor={theme.colors.surface} contentStyle={{ backgroundColor: theme.colors.surface }}>
@@ -19,9 +29,9 @@ export default function UserLoginScreen() {
           <TextInput placeholder="you@example.com" style={styles.input} placeholderTextColor="#9ca3af" />
 
           <Text style={styles.label}>Password</Text>
-          <TextInput placeholder="••••••••" style={styles.input} placeholderTextColor="#9ca3af" secureTextEntry />
+          <TextInput placeholder="••••••••" style={styles.input} placeholderTextColor="#9ca3af" secureTextEntry value={password} onChangeText={setPassword} />
 
-          <TouchableOpacity style={styles.button} activeOpacity={0.9} onPress={() => router.push('/' as any)}>
+          <TouchableOpacity style={styles.button} activeOpacity={0.9} onPress={onSubmit}>
             <Text style={styles.buttonText}>Continue</Text>
           </TouchableOpacity>
 

@@ -1,34 +1,42 @@
 import { useRouter } from 'expo-router';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Screen from '../../components/Screen';
+import { useAuthStore } from '../../store/authStore';
 import { useTheme } from '../../theme/ThemeProvider';
 
 export default function ProfileScreen() {
   const { theme } = useTheme();
   const router = useRouter();
+  const user = useAuthStore((state) => state.user);
+  const signOut = useAuthStore((state) => state.signOut);
 
   return (
     <Screen backgroundColor={theme.colors.surface} contentStyle={{ backgroundColor: theme.colors.surface }}>
       <ScrollView contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
           <Text style={styles.eyebrow}>My account</Text>
-          <Text style={styles.title}>Aarav Sharma</Text>
-          <Text style={styles.subtitle}>aarav@example.com</Text>
+          <Text style={styles.title}>{user ? user.name : 'Guest user'}</Text>
+          <Text style={styles.subtitle}>{user ? user.email : 'Please sign in to access your account'}</Text>
         </View>
 
         <View style={styles.card}>
-          <TouchableOpacity style={styles.row} onPress={() => router.push('/auth/login' as any)}>
-            <Text style={styles.rowText}>Sign in</Text>
-            <Text style={styles.arrow}>›</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.row} onPress={() => router.push('/auth/register' as any)}>
-            <Text style={styles.rowText}>Create account</Text>
-            <Text style={styles.arrow}>›</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.row}>
-            <Text style={styles.rowText}>Sign out</Text>
-            <Text style={styles.arrow}>›</Text>
-          </TouchableOpacity>
+          {!user ? (
+            <>
+              <TouchableOpacity style={styles.row} onPress={() => router.push('/auth/login' as any)}>
+                <Text style={styles.rowText}>Sign in</Text>
+                <Text style={styles.arrow}>›</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.row} onPress={() => router.push('/auth/register' as any)}>
+                <Text style={styles.rowText}>Create account</Text>
+                <Text style={styles.arrow}>›</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <TouchableOpacity style={styles.row} onPress={() => { signOut(); router.push('/auth/login' as any); }}>
+              <Text style={styles.rowText}>Sign out</Text>
+              <Text style={styles.arrow}>›</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
     </Screen>

@@ -1,67 +1,22 @@
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Screen from '../../components/Screen';
 import AdminScreenHeader from '../../components/admin/AdminScreenHeader';
+import { useAdminStore } from '../../store/adminStore';
 import { useTheme } from '../../theme/ThemeProvider';
-
-type InventoryItem = {
-  id: string;
-  name: string;
-  category: string;
-  supplier: string;
-  quantity: number;
-  reorderThreshold: number;
-  incoming: number;
-  lastRestock: string;
-  status: 'Healthy' | 'Low' | 'Out of Stock';
-  paused: boolean;
-};
-
-const initialInventory: InventoryItem[] = [
-  {
-    id: 'i1',
-    name: 'Fresh Tomatoes',
-    category: 'Vegetables',
-    supplier: 'Green Farm Supplies',
-    quantity: 48,
-    reorderThreshold: 20,
-    incoming: 14,
-    lastRestock: 'Jun 28, 2026',
-    status: 'Healthy',
-    paused: false,
-  },
-  {
-    id: 'i2',
-    name: 'Organic Spinach',
-    category: 'Vegetables',
-    supplier: 'Leafy Greens Co.',
-    quantity: 12,
-    reorderThreshold: 18,
-    incoming: 0,
-    lastRestock: 'Jun 24, 2026',
-    status: 'Low',
-    paused: false,
-  },
-  {
-    id: 'i3',
-    name: 'Coconut Water',
-    category: 'Beverages',
-    supplier: 'Tropical Traders',
-    quantity: 0,
-    reorderThreshold: 15,
-    incoming: 20,
-    lastRestock: 'Jun 20, 2026',
-    status: 'Out of Stock',
-    paused: false,
-  },
-];
 
 export default function AdminInventoryScreen() {
   const { theme } = useTheme();
   const router = useRouter();
-  const [inventory, setInventory] = useState<InventoryItem[]>(initialInventory);
+  const inventory = useAdminStore((state) => state.inventory);
+  const adjustInventoryQuantity = useAdminStore((state) => state.adjustInventoryQuantity);
+  const updateInventoryThreshold = useAdminStore((state) => state.updateInventoryThreshold);
+  const toggleInventoryPause = useAdminStore((state) => state.toggleInventoryPause);
+  const requestInventoryRestock = useAdminStore((state) => state.requestInventoryRestock);
+  const updateInventoryImage = useAdminStore((state) => state.updateInventoryImage);
   const [search, setSearch] = useState('');
+  const [imageIndexes, setImageIndexes] = useState<Record<string, number>>({});
 
   const filteredInventory = useMemo(
     () => inventory.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()) || item.category.toLowerCase().includes(search.toLowerCase())),
@@ -72,45 +27,38 @@ export default function AdminInventoryScreen() {
   const outOfStockCount = inventory.filter((item) => item.quantity === 0).length;
 
   const adjustQuantity = (id: string, delta: number) => {
-    setInventory((current) =>
-      current.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              quantity: Math.max(0, item.quantity + delta),
-              status: item.quantity + delta === 0 ? 'Out of Stock' : item.quantity + delta <= item.reorderThreshold ? 'Low' : 'Healthy',
-            }
-          : item
-      )
-    );
+    adjustInventoryQuantity(id, delta);
   };
 
   const updateThreshold = (id: string, value: string) => {
     const threshold = Number(value.replace(/[^0-9]/g, '')) || 0;
-    setInventory((current) =>
-      current.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              reorderThreshold: threshold,
-              status: item.quantity === 0 ? 'Out of Stock' : item.quantity <= threshold ? 'Low' : 'Healthy',
-            }
-          : item
-      )
-    );
+    updateInventoryThreshold(id, threshold);
   };
 
   const togglePause = (id: string) => {
-    setInventory((current) => current.map((item) => (item.id === id ? { ...item, paused: !item.paused } : item)));
+    toggleInventoryPause(id);
   };
 
   const requestRestock = (id: string) => {
-    setInventory((current) => current.map((item) => (item.id === id ? { ...item, incoming: item.incoming + 10 } : item)));
+    requestInventoryRestock(id);
+  };
+
+  const sampleImages = [
+    'https://images.unsplash.com/photo-1546094096-0df4bcaaa337?auto=format&fit=crop&w=400&q=80',
+    'https://images.unsplash.com/photo-1518843875459-f738682238a6?auto=format&fit=crop&w=400&q=80',
+    'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&w=400&q=80',
+  ];
+
+  const browseImage = (id: string) => {
+    const currentIndex = imageIndexes[id] ?? 0;
+    const nextIndex = (currentIndex + 1) % sampleImages.length;
+    setImageIndexes((current) => ({ ...current, [id]: nextIndex }));
+    updateInventoryImage(id, sampleImages[nextIndex]);
   };
 
   return (
     <Screen backgroundColor={theme.colors.surface} contentStyle={{ backgroundColor: theme.colors.surface }}>
-      <AdminScreenHeader title="Inventory" subtitle="Manage stock, reorder levels, and suppliers" onBack={() => router.back()} />
+      <AdminScreenHeader title="Stock" subtitle="Adjust quantities and reorder levels" onBack={() => router.back()} />
 
       <ScrollView contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.summaryRow}>
@@ -135,13 +83,20 @@ export default function AdminInventoryScreen() {
         {filteredInventory.map((item) => (
           <View key={item.id} style={styles.card}>
             <View style={styles.itemHeader}>
-              <View>
+              <View style={styles.itemTitleWrap}>
                 <Text style={styles.itemName}>{item.name}</Text>
                 <Text style={styles.itemCategory}>{item.category}</Text>
               </View>
               <View style={[styles.badge, item.status === 'Low' ? styles.low : item.status === 'Out of Stock' ? styles.outOfStock : styles.healthy]}>
                 <Text style={styles.badgeText}>{item.status}</Text>
               </View>
+            </View>
+
+            <View style={styles.imageRow}>
+              <Image source={{ uri: item.imageUrl || sampleImages[0] }} style={styles.itemImage} />
+              <TouchableOpacity style={styles.imageButton} onPress={() => browseImage(item.id)}>
+                <Text style={styles.imageButtonText}>Browse image</Text>
+              </TouchableOpacity>
             </View>
 
             <View style={styles.statsRow}>
@@ -171,11 +126,6 @@ export default function AdminInventoryScreen() {
                 <Text style={styles.statLabel}>Last restock</Text>
                 <Text style={styles.statValue}>{item.lastRestock}</Text>
               </View>
-            </View>
-
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Supplier</Text>
-              <Text style={styles.detailValue}>{item.supplier}</Text>
             </View>
 
             <View style={styles.actionsRow}>
@@ -212,9 +162,14 @@ const styles = StyleSheet.create({
   searchSection: { marginBottom: 16 },
   searchInput: { backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 16, paddingVertical: 12, borderWidth: 1, borderColor: '#e5e7eb' },
   card: { backgroundColor: '#fff', borderRadius: 22, padding: 18, marginBottom: 16, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: 6 }, elevation: 3 },
-  itemHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  itemHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
+  itemTitleWrap: { flex: 1, paddingRight: 10 },
   itemName: { fontSize: 16, fontWeight: '800', color: '#111827' },
   itemCategory: { marginTop: 4, fontSize: 12, color: '#6b7280' },
+  imageRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 14 },
+  itemImage: { width: 72, height: 72, borderRadius: 16, backgroundColor: '#f3f4f6' },
+  imageButton: { backgroundColor: '#f3f4f6', paddingHorizontal: 12, paddingVertical: 10, borderRadius: 999 },
+  imageButtonText: { fontSize: 12, fontWeight: '700', color: '#111827' },
   badge: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 999 },
   healthy: { backgroundColor: '#dcfce7' },
   low: { backgroundColor: '#fef3c7' },

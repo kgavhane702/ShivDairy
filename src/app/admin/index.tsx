@@ -17,10 +17,11 @@ const recentOrders = [
 ];
 
 const quickActions = [
-  { title: 'Manage Products', subtitle: 'Add, edit, and stock items', route: '/admin/products' },
+  { title: 'Catalog', subtitle: 'Add and update catalog items', route: '/admin/products' },
   { title: 'Order Queue', subtitle: 'Track new customer orders', route: '/admin/orders' },
-  { title: 'Inventory', subtitle: 'Monitor stock availability', route: '/admin/inventory' },
+  { title: 'Stock', subtitle: 'Monitor stock availability', route: '/admin/inventory' },
   { title: 'Customers', subtitle: 'View registered users', route: '/admin/customers' },
+  { title: 'Livestock', subtitle: 'Manage live animals and pricing', route: '/admin/livestock' },
   { title: 'Promotions', subtitle: 'Banners and offers', route: '/admin/promotions' },
   { title: 'Settings', subtitle: 'Store pricing and delivery rules', route: '/admin/settings' },
 ];
@@ -39,7 +40,7 @@ export default function AdminDashboardScreen() {
             <Text style={styles.subtitle}>A polished command center for managing your store.</Text>
           </View>
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-            <Text style={styles.backButtonText}>Close</Text>
+            <Text style={styles.backButtonText}>←</Text>
           </TouchableOpacity>
         </View>
 

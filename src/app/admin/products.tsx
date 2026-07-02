@@ -3,43 +3,26 @@ import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Screen from '../../components/Screen';
 import AdminScreenHeader from '../../components/admin/AdminScreenHeader';
+import { useAdminStore } from '../../store/adminStore';
 import { useTheme } from '../../theme/ThemeProvider';
-
-type Product = {
-  id: string;
-  name: string;
-  stock: number;
-  reorderThreshold: number;
-  price: string;
-  active: boolean;
-  category: string;
-  supplier: string;
-  sku: string;
-  imageUrl: string;
-};
-
-const initialProducts: Product[] = [
-  { id: 'p1', name: 'Fresh Tomatoes', stock: 48, reorderThreshold: 20, price: '₹45', active: true, category: 'Vegetables', supplier: 'Green Farm Supplies', sku: 'KR-VEG-001', imageUrl: 'https://via.placeholder.com/80/eff6ff/111827?text=T' },
-  { id: 'p2', name: 'Organic Spinach', stock: 12, reorderThreshold: 18, price: '₹30', active: false, category: 'Vegetables', supplier: 'Leafy Greens Co.', sku: 'KR-VEG-002', imageUrl: 'https://via.placeholder.com/80/fef3c7/111827?text=S' },
-  { id: 'p3', name: 'Coconut Water', stock: 24, reorderThreshold: 15, price: '₹60', active: true, category: 'Beverages', supplier: 'Tropical Traders', sku: 'KR-BVG-003', imageUrl: 'https://via.placeholder.com/80/d1fae5/111827?text=C' },
-];
 
 export default function AdminProductsScreen() {
   const { theme } = useTheme();
   const router = useRouter();
   const [search, setSearch] = useState('');
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const products = useAdminStore((state) => state.products);
+  const toggleProductActive = useAdminStore((state) => state.toggleProductActive);
 
   const filtered = useMemo(
     () => products.filter((product) => product.name.toLowerCase().includes(search.toLowerCase()) || product.category.toLowerCase().includes(search.toLowerCase()) || product.sku.toLowerCase().includes(search.toLowerCase())),
     [products, search]
   );
 
-  const toggleActive = (id: string) => setProducts((current) => current.map((item) => (item.id === id ? { ...item, active: !item.active } : item)));
+  const toggleActive = (id: string) => toggleProductActive(id);
 
   return (
     <Screen backgroundColor={theme.colors.surface} contentStyle={{ backgroundColor: theme.colors.surface }}>
-      <AdminScreenHeader title="Products" subtitle="Manage inventory, stock, and catalog" onBack={() => router.back()} actionLabel="+ Add" onAction={() => router.push('/admin/product-form' as any)} actionVariant="primary" />
+      <AdminScreenHeader title="Catalog" subtitle="Create and manage catalog items" onBack={() => router.back()} actionLabel="Add item" onAction={() => router.push('/admin/product-form' as any)} actionVariant="primary" />
 
       <View style={styles.searchWrap}>
         <TextInput placeholder="Search products" value={search} onChangeText={setSearch} style={styles.searchInput} placeholderTextColor="#9ca3af" />

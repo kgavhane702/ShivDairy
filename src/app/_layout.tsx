@@ -71,12 +71,12 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        <View style={{ flex: 1, backgroundColor: 'transparent' }} onLayout={onLayoutRootView}>
           <Stack screenOptions={{ headerShown: false }} />
           {showOverlay && (
-            <Animated.View style={[styles.overlay, { opacity: overlayOpacity, pointerEvents: 'none' }]}> 
+            <Animated.View style={[styles.overlay, { opacity: overlayOpacity, pointerEvents: 'none' }]}>
               <View style={styles.overlayInner}>
-                <Image source={require('../../assets/images/icon.png')} style={styles.logo} resizeMode="contain" />
+                <Image source={require('../../assets/shiv-dairy-farm.png')} style={styles.logo} resizeMode="contain" />
               </View>
             </Animated.View>
           )}
@@ -89,11 +89,11 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: '#208AEF',
+    backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 9999,
   },
-  overlayInner: { alignItems: 'center' },
-  logo: { width: 160, height: 160, borderRadius: 24 },
+  overlayInner: { width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' },
+  logo: { width: '70%', maxWidth: 320, height: undefined, aspectRatio: 595 / 419, borderRadius: 0 },
 });

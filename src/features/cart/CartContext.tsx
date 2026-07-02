@@ -30,6 +30,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((current) => {
       const existing = current.find((item) => item.id === product.id);
       if (existing) {
+        if (product.saleMode === "unit") {
+          return current;
+        }
         return current.map((item) => (item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item));
       }
 

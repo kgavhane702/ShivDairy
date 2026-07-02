@@ -1,44 +1,27 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Screen from '../../components/Screen';
 import AdminScreenHeader from '../../components/admin/AdminScreenHeader';
+import { useAdminStore } from '../../store/adminStore';
 import { useTheme } from '../../theme/ThemeProvider';
 
 const statusOptions = ['Pending', 'Packed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'] as const;
 
-type Order = {
-  id: string;
-  customer: string;
-  amount: string;
-  status: (typeof statusOptions)[number];
-  reason?: string;
-};
-
-const initialOrders: Order[] = [
-  { id: '#1001', customer: 'Aarav', amount: '₹360', status: 'Packed' },
-  { id: '#1002', customer: 'Meera', amount: '₹180', status: 'Pending' },
-  { id: '#1003', customer: 'Rohan', amount: '₹540', status: 'Out for Delivery' },
-  { id: '#1004', customer: 'Sana', amount: '₹290', status: 'Cancelled', reason: 'Customer request' },
-];
+type OrderStatus = (typeof statusOptions)[number];
 
 export default function AdminOrdersScreen() {
   const { theme } = useTheme();
   const router = useRouter();
-  const [orders, setOrders] = useState<Order[]>(initialOrders);
+  const orders = useAdminStore((state) => state.orders);
+  const updateOrderStatus = useAdminStore((state) => state.updateOrderStatus);
+  const setOrderReason = useAdminStore((state) => state.setOrderReason);
 
-  const updateOrder = (id: string, status: Order['status']) => {
-    setOrders((current) =>
-      current.map((order) => ({
-        ...order,
-        status: order.id === id ? status : order.status,
-        reason: order.id === id && status !== 'Cancelled' ? undefined : order.reason,
-      }))
-    );
+  const updateOrder = (id: string, status: OrderStatus) => {
+    updateOrderStatus(id, status);
   };
 
   const setReason = (id: string, reason: string) => {
-    setOrders((current) => current.map((order) => (order.id === id ? { ...order, reason } : order)));
+    setOrderReason(id, reason);
   };
 
   return (
@@ -70,7 +53,7 @@ export default function AdminOrdersScreen() {
                       : order.status === 'Shipped'
                       ? styles.shipped
                       : order.status === 'Out for Delivery'
-                      ? styles.outForDelivery
+                      ? styles.delivered
                       : order.status === 'Delivered'
                       ? styles.delivered
                       : styles.cancelled,
@@ -80,7 +63,7 @@ export default function AdminOrdersScreen() {
                 </Text>
               </View>
               <View style={[styles.tableCell, styles.actionsColumn]}>
-                <TouchableOpacity style={styles.viewButton} onPress={() => router.push('/admin/order-detail' as any)}>
+                <TouchableOpacity style={styles.viewButton} onPress={() => router.push(`/admin/order-detail?id=${order.id}` as any)}>
                   <Text style={styles.viewButtonText}>View</Text>
                 </TouchableOpacity>
               </View>

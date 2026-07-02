@@ -1,41 +1,23 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
 import { ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import Screen from '../../components/Screen';
 import AdminScreenHeader from '../../components/admin/AdminScreenHeader';
+import { useAdminStore } from '../../store/adminStore';
 import { useTheme } from '../../theme/ThemeProvider';
-
-type Customer = {
-  name: string;
-  email: string;
-  orders: number;
-  banned: boolean;
-  reason?: string;
-};
-
-const initialCustomers: Customer[] = [
-  { name: 'Aarav', email: 'aarav@example.com', orders: 3, banned: false },
-  { name: 'Meera', email: 'meera@example.com', orders: 2, banned: false },
-  { name: 'Rohan', email: 'rohan@example.com', orders: 5, banned: true, reason: 'Repeated cancellations' },
-];
 
 export default function AdminCustomersScreen() {
   const { theme } = useTheme();
   const router = useRouter();
-  const [customers, setCustomers] = useState<Customer[]>(initialCustomers);
+  const customers = useAdminStore((state) => state.customers);
+  const toggleCustomerBan = useAdminStore((state) => state.toggleCustomerBan);
+  const setCustomerBanReason = useAdminStore((state) => state.setCustomerBanReason);
 
   const toggleBan = (email: string) => {
-    setCustomers((current) =>
-      current.map((customer) =>
-        customer.email === email
-          ? { ...customer, banned: !customer.banned, reason: customer.banned ? undefined : customer.reason ?? '' }
-          : customer
-      )
-    );
+    toggleCustomerBan(email);
   };
 
   const setReason = (email: string, reason: string) => {
-    setCustomers((current) => current.map((customer) => (customer.email === email ? { ...customer, reason } : customer)));
+    setCustomerBanReason(email, reason);
   };
 
   return (

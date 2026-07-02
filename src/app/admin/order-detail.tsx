@@ -1,8 +1,9 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Screen from '../../components/Screen';
 import AdminScreenHeader from '../../components/admin/AdminScreenHeader';
+import { useAdminStore } from '../../store/adminStore';
 import { useTheme } from '../../theme/ThemeProvider';
 
 const statusOptions = ['Pending', 'Packed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'] as const;
@@ -55,14 +56,21 @@ const initialOrder: Order = {
 export default function AdminOrderDetailScreen() {
   const { theme } = useTheme();
   const router = useRouter();
+  const params = useLocalSearchParams();
+  const orderId = typeof params.id === 'string' ? params.id : '#1001';
+  const getOrderById = useAdminStore((state) => state.getOrderById);
+  const updateOrderStatus = useAdminStore((state) => state.updateOrderStatus);
+  const storeOrder = getOrderById(orderId);
   const [order, setOrder] = useState<Order>(initialOrder);
 
-  const subtotal = useMemo(() => order.items.reduce((sum, item) => sum + item.qty * item.unitPrice, 0), [order.items]);
+  const currentOrder = storeOrder ? { ...order, ...storeOrder } : order;
+  const subtotal = useMemo(() => currentOrder.items.reduce((sum, item) => sum + item.qty * item.unitPrice, 0), [currentOrder.items]);
   const shippingFee = 35;
   const discount = 20;
   const total = subtotal + shippingFee - discount;
 
   const updateStatus = (status: Order['status']) => {
+    updateOrderStatus(orderId, status);
     setOrder((current) => ({
       ...current,
       status,
@@ -72,28 +80,28 @@ export default function AdminOrderDetailScreen() {
 
   return (
     <Screen backgroundColor={theme.colors.surface} contentStyle={{ backgroundColor: theme.colors.surface }}>
-      <AdminScreenHeader title={`Order ${order.id}`} subtitle="Complete order summary" onBack={() => router.back()} />
+      <AdminScreenHeader title={`Order ${currentOrder.id}`} subtitle="Complete order summary" onBack={() => router.back()} />
 
       <ScrollView contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
           <View style={styles.summaryRow}>
             <View>
               <Text style={styles.sectionTitle}>Order</Text>
-              <Text style={styles.sectionValue}>{order.id}</Text>
+              <Text style={styles.sectionValue}>{currentOrder.id}</Text>
             </View>
             <View>
               <Text style={styles.sectionTitle}>Placed</Text>
-              <Text style={styles.sectionValue}>{order.date}</Text>
+              <Text style={styles.sectionValue}>{currentOrder.date}</Text>
             </View>
           </View>
           <View style={styles.summaryRow}>
             <View>
               <Text style={styles.sectionTitle}>Payment</Text>
-              <Text style={styles.sectionValue}>{order.paymentMethod}</Text>
+              <Text style={styles.sectionValue}>{currentOrder.paymentMethod}</Text>
             </View>
             <View>
               <Text style={styles.sectionTitle}>Delivery</Text>
-              <Text style={styles.sectionValue}>{order.deliveryEstimate}</Text>
+              <Text style={styles.sectionValue}>{currentOrder.deliveryEstimate}</Text>
             </View>
           </View>
         </View>
@@ -102,33 +110,33 @@ export default function AdminOrderDetailScreen() {
           <Text style={styles.sectionTitle}>Customer & shipping</Text>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Name</Text>
-            <Text style={styles.detailValue}>{order.customer}</Text>
+            <Text style={styles.detailValue}>{currentOrder.customer}</Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Phone</Text>
-            <Text style={styles.detailValue}>{order.phone}</Text>
+            <Text style={styles.detailValue}>{currentOrder.phone}</Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Email</Text>
-            <Text style={styles.detailValue}>{order.email}</Text>
+            <Text style={styles.detailValue}>{currentOrder.email}</Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Address</Text>
-            <Text style={styles.detailValue}>{order.address}</Text>
+            <Text style={styles.detailValue}>{currentOrder.address}</Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>City</Text>
-            <Text style={styles.detailValue}>{order.city}</Text>
+            <Text style={styles.detailValue}>{currentOrder.city}</Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Shipping</Text>
-            <Text style={styles.detailValue}>{order.shippingMethod}</Text>
+            <Text style={styles.detailValue}>{currentOrder.shippingMethod}</Text>
           </View>
         </View>
 
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Items purchased</Text>
-          {order.items.map((item) => (
+          {currentOrder.items.map((item) => (
             <View key={item.id} style={styles.itemRow}>
               <View style={styles.itemImageWrap}>
                 <Image source={{ uri: item.image }} style={styles.itemImage} />
@@ -167,7 +175,7 @@ export default function AdminOrderDetailScreen() {
           <Text style={styles.sectionTitle}>Delivery workflow</Text>
           <View style={styles.timelineGrid}>
             {statusOptions.map((status) => {
-              const isActive = statusOptions.indexOf(status) <= statusOptions.indexOf(order.status);
+              const isActive = statusOptions.indexOf(status) <= statusOptions.indexOf(currentOrder.status);
               return (
                 <View key={status} style={[styles.timelineStep, isActive && styles.timelineStepActive]}>
                   <View style={[styles.timelineDot, isActive && styles.timelineDotActive]} />
@@ -181,25 +189,25 @@ export default function AdminOrderDetailScreen() {
               <TouchableOpacity
                 key={status}
                 onPress={() => updateStatus(status)}
-                style={[styles.statusOption, order.status === status && styles.statusOptionActive]}
+                style={[styles.statusOption, currentOrder.status === status && styles.statusOptionActive]}
                 activeOpacity={0.85}
               >
-                <Text style={[styles.statusOptionText, order.status === status && styles.statusOptionTextActive]}>{status}</Text>
+                <Text style={[styles.statusOptionText, currentOrder.status === status && styles.statusOptionTextActive]}>{status}</Text>
               </TouchableOpacity>
             ))}
           </View>
-          {order.status === 'Cancelled' ? (
+          {currentOrder.status === 'Cancelled' ? (
             <View style={styles.cancelCard}>
               <Text style={styles.sectionTitle}>Cancellation reason</Text>
-              <Text style={styles.cancelText}>{order.cancelReason}</Text>
+              <Text style={styles.cancelText}>{currentOrder.cancelReason}</Text>
             </View>
           ) : null}
         </View>
 
-        {order.note ? (
+        {currentOrder.note ? (
           <View style={styles.card}>
             <Text style={styles.sectionTitle}>Customer note</Text>
-            <Text style={styles.noteText}>{order.note}</Text>
+            <Text style={styles.noteText}>{currentOrder.note}</Text>
           </View>
         ) : null}
       </ScrollView>

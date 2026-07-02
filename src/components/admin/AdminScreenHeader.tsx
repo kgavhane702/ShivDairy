@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     elevation: 2,
   },
-  backButtonText: { fontSize: 18, color: '#111827', fontWeight: '700' },
+  backButtonText: { fontSize: 20, color: '#111827', fontWeight: '700', lineHeight: 20, textAlign: 'center', includeFontPadding: false },
   headerTextWrap: { flex: 1, marginHorizontal: 10 },
   title: { fontSize: 22, fontWeight: '800', color: '#111827' },
   subtitle: { color: '#6b7280', fontSize: 13, marginTop: 2 },

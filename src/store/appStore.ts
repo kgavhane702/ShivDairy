@@ -2,11 +2,25 @@ import { create } from 'zustand';
 import { coupons } from '../data/catalog';
 import type { CartItem, CartSummary, Product } from '../domain/types';
 
+export type EnquiryStatus = 'New' | 'Reviewed' | 'Booked';
+
+export type EnquiryItem = {
+  id: string;
+  animalId: string;
+  animalTitle: string;
+  name: string;
+  phone: string;
+  notes: string;
+  createdAt: string;
+  status: EnquiryStatus;
+};
+
 type AppState = {
   items: CartItem[];
   appliedCouponCode: string | null;
   summary: CartSummary;
   wishlistItems: Product[];
+  enquiries: EnquiryItem[];
   addItem: (product: Product) => void;
   updateQuantity: (productId: string, delta: number) => void;
   removeItem: (productId: string) => void;
@@ -16,6 +30,8 @@ type AppState = {
   toggleWishlist: (product: Product) => void;
   removeFromWishlist: (productId: string) => void;
   isInWishlist: (productId: string) => boolean;
+  addEnquiry: (enquiry: Omit<EnquiryItem, 'id' | 'createdAt' | 'status'>) => void;
+  updateEnquiryStatus: (id: string, status: EnquiryStatus) => void;
 };
 
 const buildSummary = (items: CartItem[], appliedCouponCode: string | null): CartSummary => {
@@ -41,12 +57,36 @@ export const useAppStore = create<AppState>((set, get) => ({
   appliedCouponCode: null,
   summary: buildSummary([], null),
   wishlistItems: [],
+  enquiries: [
+    {
+      id: 'sample-enquiry-1',
+      animalId: 'animal-broiler-chicken',
+      animalTitle: 'Broiler Chicken',
+      name: 'Rahul Patil',
+      phone: '9876543210',
+      notes: 'Need 3 healthy birds for weekend delivery.',
+      createdAt: 'Today, 10:30 AM',
+      status: 'New',
+    },
+    {
+      id: 'sample-enquiry-2',
+      animalId: 'animal-kombda-goat',
+      animalTitle: 'Kombda Goat',
+      name: 'Meera Deshmukh',
+      phone: '9123456780',
+      notes: 'Looking for a breeding-quality goat with good health.',
+      createdAt: 'Today, 1:15 PM',
+      status: 'Reviewed',
+    },
+  ],
 
   addItem: (product) =>
     set((state) => {
       const existing = state.items.find((item) => item.id === product.id);
       const nextItems = existing
-        ? state.items.map((item) => (item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item))
+        ? product.saleMode === "unit"
+          ? state.items
+          : state.items.map((item) => (item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item))
         : [...state.items, { ...product, quantity: 1 }];
 
       return {
@@ -107,4 +147,26 @@ export const useAppStore = create<AppState>((set, get) => ({
     })),
 
   isInWishlist: (productId) => get().wishlistItems.some((item) => item.id === productId),
+
+  addEnquiry: (enquiry) =>
+    set((state) => ({
+      enquiries: [
+        {
+          id: `${Date.now()}`,
+          animalId: enquiry.animalId,
+          animalTitle: enquiry.animalTitle,
+          name: enquiry.name,
+          phone: enquiry.phone,
+          notes: enquiry.notes,
+          createdAt: new Date().toLocaleString(),
+          status: 'New',
+        },
+        ...state.enquiries,
+      ],
+    })),
+
+  updateEnquiryStatus: (id, status) =>
+    set((state) => ({
+      enquiries: state.enquiries.map((item) => (item.id === id ? { ...item, status } : item)),
+    })),
 }));

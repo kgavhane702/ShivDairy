@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../theme/ThemeProvider";
@@ -30,12 +30,21 @@ export default function TopBar() {
             <Text style={[styles.eta, { color: theme.colors.primary }]}>13 mins</Text>
             <Text style={[styles.locationText, { color: theme.colors.textSecondary }]}>Home - D 403, Aura county Society, Bengaluru</Text>
           </View>
-          <TouchableOpacity
-            style={[styles.avatar, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}
-            onPress={() => router.push({ pathname: '/account' })}
-          > 
+          <Pressable
+            style={({ pressed }) => [
+              styles.avatar,
+              { backgroundColor: theme.colors.card, borderColor: theme.colors.border },
+              pressed && styles.avatarPressed,
+            ]}
+            hitSlop={8}
+            onPress={() => {
+              requestAnimationFrame(() => {
+                router.push('/account' as any);
+              });
+            }}
+          >
             <Text style={styles.avatarText}>👤</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </Animated.View>
@@ -59,6 +68,7 @@ const styles = StyleSheet.create({
     boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.08)',
     elevation: 2,
   },
+  avatarPressed: { transform: [{ scale: 0.96 }] },
   avatarText: { fontSize: 18 },
 });
 
